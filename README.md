@@ -1,5 +1,6 @@
 # and101lab5RandomPets
 
 
-https://github.com/psbrar2002/and101lab5RandomPets/assets/96799357/4e9bacfb-3080-4564-b931-fbcc7bc18153
 
+
+![Lab6AND101](https://github.com/psbrar2002/and101lab6RandomPets2/assets/96799357/0bb8ed0e-0f2c-4a14-9951-b52c380e8673)
