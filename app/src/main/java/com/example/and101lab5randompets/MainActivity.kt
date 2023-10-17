@@ -5,39 +5,41 @@ import android.os.Bundle
 import android.util.Log
 import android.widget.Button
 import android.widget.ImageView
+import androidx.recyclerview.widget.DividerItemDecoration
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.codepath.asynchttpclient.AsyncHttpClient
 import com.codepath.asynchttpclient.callback.JsonHttpResponseHandler
 import okhttp3.Headers
 
 class MainActivity : AppCompatActivity() {
-    var petImageURL =""
-    override fun onCreate(savedInstanceState: Bundle?) {
+    private lateinit var petList: MutableList<String>
+    private lateinit var rvPets: RecyclerView
 
+    override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        getDogImageURL()
-        Log.d("petImageURL","pet image URL set")
-        val button = findViewById<Button>(R.id.petButton)
-        val imageView = findViewById<ImageView>(R.id.petImage)
-        getNextImage(button,imageView)
-    }
-    private fun getNextImage(button: Button, imageView: ImageView) {
-        button.setOnClickListener {
-            getDogImageURL()
 
-            Glide.with(this)
-                .load(petImageURL)
-                .fitCenter()
-                .into(imageView)
-        }
+        rvPets = findViewById(R.id.pet_list)
+        petList = mutableListOf()
+
+        getDogImageURL()
     }
+
     private fun getDogImageURL() {
         val client = AsyncHttpClient()
-        client["https://dog.ceo/api/breeds/image/random", object : JsonHttpResponseHandler() {
+
+        client["https://dog.ceo/api/breeds/image/random/20", object : JsonHttpResponseHandler() {
             override fun onSuccess(statusCode: Int, headers: Headers, json: JsonHttpResponseHandler.JSON) {
-                petImageURL = json.jsonObject.getString("message")
-                Log.d("Dog", "response successful$json")
+                val petImageArray = json.jsonObject.getJSONArray("message")
+                for (i in 0 until petImageArray.length()) {
+                    petList.add(petImageArray.getString(i))
+                }
+                val petAdapter = PetAdapter(petList)
+                rvPets.adapter = petAdapter
+                rvPets.layoutManager = LinearLayoutManager(this@MainActivity)
+                rvPets.addItemDecoration(DividerItemDecoration(this@MainActivity, LinearLayoutManager.VERTICAL))
             }
 
             override fun onFailure(
@@ -50,5 +52,4 @@ class MainActivity : AppCompatActivity() {
             }
         }]
     }
-
 }
